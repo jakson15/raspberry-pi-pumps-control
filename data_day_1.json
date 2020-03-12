@@ -1,0 +1,65 @@
+{
+    "1": {
+        "start_hour_input": "",
+        "stop_hour_input": "",
+        "pump_1": 0,
+        "pump_2": 0,
+        "pump_3": 0
+    },
+    "2": {
+        "start_hour_input": "",
+        "stop_hour_input": "",
+        "pump_1": 0,
+        "pump_2": 0,
+        "pump_3": 0
+    },
+    "3": {
+        "start_hour_input": "",
+        "stop_hour_input": "",
+        "pump_1": 0,
+        "pump_2": 0,
+        "pump_3": 0
+    },
+    "4": {
+        "start_hour_input": "",
+        "stop_hour_input": "",
+        "pump_1": 0,
+        "pump_2": 1,
+        "pump_3": 1
+    },
+    "5": {
+        "start_hour_input": "",
+        "stop_hour_input": "",
+        "pump_1": 0,
+        "pump_2": 0,
+        "pump_3": 0
+    },
+    "6": {
+        "start_hour_input": "",
+        "stop_hour_input": "",
+        "pump_1": 0,
+        "pump_2": 0,
+        "pump_3": 0
+    },
+    "7": {
+        "start_hour_input": "",
+        "stop_hour_input": "",
+        "pump_1": 0,
+        "pump_2": 0,
+        "pump_3": 0
+    },
+    "8": {
+        "start_hour_input": "",
+        "stop_hour_input": "",
+        "pump_1": 0,
+        "pump_2": 0,
+        "pump_3": 0
+    },
+    "9": {
+        "start_hour_input": "",
+        "stop_hour_input": "",
+        "pump_1": 0,
+        "pump_2": 0,
+        "pump_3": 0
+    }
+}
