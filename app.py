@@ -1,7 +1,6 @@
 from guizero import App, Box, PushButton, ListBox, Text, CheckBox, TextBox, Window, info
 import json
 import time
-import datetime
 import RPi.GPIO as GPIO
 from ina219 import INA219
 from ina219 import DeviceRangeError
@@ -225,6 +224,33 @@ def manual_mode(pump_port):
             pump_3_button_status.text = "On"
             pump_3_button_status.text_color = "green"
 
+def pump_switch_status(pumps_ports):
+    for gpio_port in pumps_ports:
+        state = GPIO.input(pumps_ports[gpio_port])
+        if "dom" == gpio_port:
+            if pump_1_button_status.text == "On" and 1 == state:
+                pump_1_button_status.text = "Off"
+                pump_1_button_status.text_color = "red"
+            elif pump_1_button_status.text == "Off" and 0 == state:
+                pump_1_button_status.text = "On"
+                pump_1_button_status.text_color = "green"
+
+        if "haft" == gpio_port:
+            if pump_2_button_status.text == "On" and 1 == state:
+                pump_2_button_status.text = "Off"
+                pump_2_button_status.text_color = "red"
+            elif pump_2_button_status.text == "Off" and 0 == state:
+                pump_2_button_status.text = "On"
+                pump_2_button_status.text_color = "green"
+
+        if "firany" == gpio_port:
+            if pump_3_button_status.text == "On" and 1 == state:
+                pump_3_button_status.text = "Off"
+                pump_3_button_status.text_color = "red"
+            elif pump_3_button_status.text == "Off" and 0 == state:
+                pump_3_button_status.text = "On"
+                pump_3_button_status.text_color = "green"
+
 direct_control = Box(data_view, align="top", layout="grid", grid=[1,0])
 Text(direct_control, text="Bezpośrednie sterowanie", size=18, grid=[0,0])
 Text(direct_control, text="Dom", size=18, grid=[0,1])
@@ -233,7 +259,7 @@ Text(direct_control, text="Haft", size=18, grid=[0,2])
 pump_2_button_status = PushButton(direct_control, text="On", width="10", align="left", grid=[1,2], command=manual_mode, args=[pumps_ports['haft']])
 Text(direct_control, text="Firany", size=18, grid=[0,3])
 pump_3_button_status = PushButton(direct_control, text="On", width="10", align="left", grid=[1,3], command=manual_mode, args=[pumps_ports['firany']])
-is_manual = CheckBox(direct_control, text="Recznie", align="left", grid=[1,4])
+is_manual = CheckBox(direct_control, text="Ręcznie", align="left", grid=[1,4])
 
 update_pump_status()
 
@@ -263,6 +289,7 @@ def read_working_hours_line(start_hour, stop_hour, pump_1_value, pump_2_value, p
 data_list_view(time.strftime("%w"))
 
 app.repeat(10000, update_pump_status)
+app.repeat(10000, pump_switch_status, args=[pumps_ports])
 
 buttons = Box(app, width="fill", align="bottom")
 PushButton(buttons, text="Edytuj", width="fill", align="right", command=open_edition_window, args=[window_edit_hour])
