@@ -12,6 +12,31 @@ TEMP = 0.0465
 
 #ina.configure(voltage_range=ina.RANGE_16V, gain=ina.GAIN_AUTO, bus_adc=ina.ADC_128SAMP, shunt_adc=ina.ADC_128SAMP)
 
+def is_manual_mode():
+    try:
+        with open("config.json", "r") as json_file:
+            data = json.load(json_file)
+            return data
+    except FileNotFoundError:
+        print("Nie ma pliku config. Ustaw tryb manulny aby go stworzyć.")
+        return False
+    except:
+        print("Wystąpił nieznany problem z plikiem ustawień")
+        return False
+
+
+def set_manual_mode(mode):
+    data = is_manual_mode()
+    if data:
+        data["manual_mode"] = mode
+        with open("config.json", "w") as json_file:
+            json.dump(data, json_file, indent=4)
+    else:
+        new_data_file = {
+            "manual_mode": 1
+        }
+        with open("config.json", "w") as json_file:
+            json.dump(new_data_file, json_file, indent=4)
 
 def read():
     voltage = OHMS * ina.current()
@@ -100,7 +125,7 @@ def check_hour_format(text_box):
         return False
 
 def close_app():
-    if app.yesno("Zamknij", "Czy chcesxz zamknąć?"):
+    if app.yesno("Zamknij", "Czy chcesz zamknąć?"):
         app.destroy()
 
 def data_list_view(day):
@@ -109,15 +134,18 @@ def data_list_view(day):
         single_line_data = read_working_hours_line(data_value["start_hour_input"], data_value["stop_hour_input"], data_value["pump_1"], data_value["pump_2"], data_value["pump_3"], data_key)
     return day
 
-def auto_manual_turn_off():
-    hour = int(time.strftime("%H"))
-
-    if hour == 1:
-        #is_manual.value = 0
-        return True
+def auto_manual_status():
+    data = is_manual_mode()
+    if data:
+        if data["manual_mode"] == 1:
+            is_manual.value = 1
+        else:
+            is_manual.value = 0
+    else:
+        return is_manual_mode()
 
 def update_pump_status():
-    auto_manual_turn_off()
+    auto_manual_status()
     if 0 == is_manual.value:
         working_pumps = schedule_pumps_work()
         if (working_pumps):
@@ -251,6 +279,12 @@ def pump_switch_status(pumps_ports):
                 pump_3_button_status.text = "On"
                 pump_3_button_status.text_color = "green"
 
+def update_manual_mode():
+    if is_manual.value == 1:
+        set_manual_mode(1)
+    else:
+        set_manual_mode(0)
+
 direct_control = Box(data_view, align="top", layout="grid", grid=[1,0])
 Text(direct_control, text="Bezpośrednie sterowanie", size=18, grid=[0,0])
 Text(direct_control, text="Dom", size=18, grid=[0,1])
@@ -259,7 +293,7 @@ Text(direct_control, text="Haft", size=18, grid=[0,2])
 pump_2_button_status = PushButton(direct_control, text="On", width="10", align="left", grid=[1,2], command=manual_mode, args=[pumps_ports['haft']])
 Text(direct_control, text="Firany", size=18, grid=[0,3])
 pump_3_button_status = PushButton(direct_control, text="On", width="10", align="left", grid=[1,3], command=manual_mode, args=[pumps_ports['firany']])
-is_manual = CheckBox(direct_control, text="Ręcznie", align="left", grid=[1,4])
+is_manual = CheckBox(direct_control, text="Ręcznie", align="left", grid=[1,4], command=update_manual_mode)
 
 update_pump_status()
 
